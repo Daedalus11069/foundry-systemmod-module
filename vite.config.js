@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import ModuleData from "./module.json";
 import PackageData from "./package.json";
 import { defineConfig } from "vite";
@@ -5,7 +6,7 @@ import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import generateFile from "vite-plugin-generate-file";
-import { resolve } from "path";
+import zipPack from "vite-plugin-zip-pack";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -102,9 +103,10 @@ export default defineConfig({
     minify: false,
     target: ["es2022"],
     lib: {
-      entry: "./src/main.js",
+      entry: "./src/systemmod.js",
       formats: ["es"],
-      fileName: "main"
+      fileName: "scripts/systemmod",
+      cssFileName: "styles/systemmod"
     }
   },
   // Necessary when using the dev server for top-level await usage inside of TRL.
@@ -120,8 +122,9 @@ export default defineConfig({
       buildStart() {
         delete ModuleData.scripts;
         ModuleData.version = PackageData.version;
-        ModuleData.esmodules = ["main.js"];
-        ModuleData.download = `https://github.com/Daedalus11069/${PackageData.name}/main/download/v${PackageData.version}/${PackageData.name}_${PackageData.version}.zip`;
+        ModuleData.esmodules = ["scripts/systemmod.js"];
+        ModuleData.styles = ["styles/systemmod.css"];
+        ModuleData.download = `https://github.com/Daedalus11069/${PackageData.name}/main/download/v${PackageData.version}/${ModuleData.id}_${PackageData.version}.zip`;
       }
     },
     tailwindcss(),
@@ -131,16 +134,15 @@ export default defineConfig({
         template: "src/module.ejs",
         output: "module.json",
         data: { ModuleData }
-      },
-      {
-        type: "template",
-        template: "src/module.ejs",
-        output: "../manifest/module.json",
-        data: { ModuleData }
       }
     ]),
     viteStaticCopy({
       targets: [{ src: "lang", dest: "" }]
+    }),
+    zipPack({
+      inDir: "dist",
+      outDir: "dist-zip",
+      outFileName: `${ModuleData.id}_${PackageData.version}.zip`
     })
   ]
 });
