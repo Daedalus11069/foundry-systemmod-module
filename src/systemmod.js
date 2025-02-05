@@ -1,6 +1,6 @@
 // Import the VueApplicationMixin
-import VueSheet from "./assets/libs/vue/VueSheet.js";
-import VueSystemModSheet from "./assets/vue/SystemModSheet.vue";
+import VueSheet from "./libs/vue/VueSheet.js";
+import VueSystemModSheet from "./scripts/SystemModSheet.vue";
 import { get } from "lodash-es";
 
 Hooks.once("init", async function () {

@@ -79,6 +79,27 @@ const removeMod = idx => {
 };
 </script>
 
-<style scoped>
-@import "../../systemmod.css";
+<style>
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+@utility m-* {
+  margin: calc(--value(ratio) * 100%);
+}
+@utility mt-* {
+  margin-top: calc(--value(ratio) * 100%);
+}
+@utility mb-* {
+  margin-bottom: calc(--value(ratio) * 100%);
+}
+@utility ms-* {
+  margin-left: calc(--value(ratio) * 100%);
+}
+@utility me-* {
+  margin-right: calc(--value(ratio) * 100%);
+}
 </style>
