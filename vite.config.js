@@ -124,7 +124,7 @@ export default defineConfig({
         ModuleData.version = PackageData.version;
         ModuleData.esmodules = ["scripts/systemmod.js"];
         ModuleData.styles = ["styles/systemmod.css"];
-        ModuleData.download = `https://github.com/Daedalus11069/${PackageData.name}/main/download/v${PackageData.version}/${ModuleData.id}_${PackageData.version}.zip`;
+        ModuleData.download = `https://github.com/Daedalus11069/${PackageData.name}/releases/download/v${PackageData.version}/${ModuleData.id}_${PackageData.version}.zip`;
       }
     },
     tailwindcss(),
