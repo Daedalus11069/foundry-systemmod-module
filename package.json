@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "foundry-systemmod-module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,12 +15,12 @@
     "@vueuse/integrations": "^12.5.0",
     "eval-estree-expression": "^2.0.3",
     "file-saver": "^2.0.5",
-    "flowbite": "^3.1.1",
+    "flowbite": "^3.1.2",
     "focus-trap": "^7.6.4",
     "lodash-es": "^4.17.21",
     "nanoid": "^5.0.9",
     "paraphrase": "^3.1.2",
-    "tailwindcss": "^4.0.3",
+    "tailwindcss": "^4.0.4",
     "vue": "^3.5.13",
     "vue-draggable-plus": "^0.6.0"
   },
@@ -28,6 +28,7 @@
     "@tailwindcss/postcss": "^4.0.3",
     "@tailwindcss/vite": "^4.0.3",
     "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
     "postcss-import": "^16.1.0",
     "postcss-nested": "^7.0.2",

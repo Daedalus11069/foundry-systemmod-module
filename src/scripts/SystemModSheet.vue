@@ -212,15 +212,32 @@ onUnmounted(async () => {
 });
 </script>
 
-<style>
-@plugin "flowbite/plugin";
+<style lang="scss">
+@plugin "../../altered-plugins/flowbite";
 @source "../node_modules/flowbite";
+
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css" layer(utilities);
+.systemmod-container {
+  @import "tailwindcss/preflight.css" layer(base);
+  @import "tailwindcss/utilities.css" layer(utilities);
 
-@import "../systemmod.css";
+  @utility m-* {
+    margin: calc(--value(ratio) * 100%);
+  }
+  @utility mt-* {
+    margin-top: calc(--value(ratio) * 100%);
+  }
+  @utility mb-* {
+    margin-bottom: calc(--value(ratio) * 100%);
+  }
+  @utility ms-* {
+    margin-left: calc(--value(ratio) * 100%);
+  }
+  @utility me-* {
+    margin-right: calc(--value(ratio) * 100%);
+  }
+}
 </style>
 
 <style lang="scss" scoped>
