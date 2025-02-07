@@ -20,12 +20,15 @@
       "Lists": "Lists",
       "List": "List",
       "Add": "Add List",
+      "Duplicate": "Duplicate",
       "Remove": "Remove",
       "Key": "Key",
       "AvailableSubKeys": "Available sub-keys",
       "ListOption": {
         "ExistsIf": "Exists If"
       },
+      "ExistsIfHelp": "Checks for the existence of a non-empty value; if the value isn't empty, the data will be added.",
+      "ExistsIfExists": "exists.",
       "SubKeyHelp": "Can be used in place of key names in target values for modifications.  Use syntax of ${subKey} to replace value with sub key value.",
       "InvalidKeyType": "Invalid Key type; key must point to a collection key-value objects."
     },
@@ -42,8 +45,13 @@
       "Raw": "Raw Value",
       "RawHelp": "The result becomes the evaluated raw value.  'Value' is the value of the source and can be used in the raw value."
     },
+    "Settings": "Settings",
+    "ExportConfig": "Export Config",
+    "ImportConfig": "Import Config",
     "Remove": "Remove",
     "AreYouSure": "Are you sure you want to remove this {thing}?\nThis action cannot be undone.",
+    "DoYouWantTo": "Are you sure you want to {action} this {thing}?",
+    "LoadedConfig": "Loaded config file for {actor}.",
     "Error": {
       "FailedLoadingConfig": "Config for {actor} failed to load! Error message: {error}"
     }

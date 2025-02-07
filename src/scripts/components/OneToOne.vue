@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="tabsKey" ref="focusElm">
     <div class="flex flex-row mb-2">
       <div class="basis-4/12">
         {{ localize("SYSTEMMOD.OneToOne.SourceKey") }}
@@ -80,13 +80,27 @@
 </template>
 
 <script setup>
-import { computed, inject } from "vue";
+import {
+  computed,
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  useTemplateRef
+} from "vue";
+import { promiseTimeout } from "@vueuse/core";
+import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
+import { initFlowbite } from "flowbite";
 import { localize } from "../../libs/vue/VueHelpers";
 
 const actor = inject("actor");
 
 const fields = defineModel();
 const sourceKey = defineModel("sourceKey");
+const tabsKey = defineModel("tabsKey");
+
+const focusEl = useTemplateRef("focusElm");
+const { activate, deactivate } = useFocusTrap(focusEl);
 
 const sourceKeys = computed(() => {
   return Object.keys(actor.system[sourceKey.value]);
@@ -107,6 +121,17 @@ const onRemoveMod = idx => {
     fields.value.splice(idx, 1);
   }
 };
+
+onMounted(async () => {
+  activate();
+  await nextTick();
+  await promiseTimeout(0);
+  initFlowbite();
+});
+
+onUnmounted(async () => {
+  deactivate();
+});
 </script>
 
 <style lang="scss" scoped></style>

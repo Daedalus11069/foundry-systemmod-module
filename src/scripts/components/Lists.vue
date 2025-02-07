@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="tabsKey" ref="focusElm">
     <div :id="accordionId" data-accordion="collapse">
       <VueDraggable
         class="w-full"
@@ -38,7 +38,7 @@
             </button>
           </h2>
           <div :id="`${list.id}-collapse-body`" class="hidden">
-            <div class="flex flex-row">
+            <div class="flex flex-row gap-x-2">
               <div class="basis-1/2">
                 <label>{{ localize("SYSTEMMOD.Lists.Key") }}:</label>
                 <input
@@ -46,6 +46,13 @@
                   v-model="list.key"
                   :placeholder="localize('SYSTEMMOD.Lists.Key')"
                 />
+              </div>
+              <div class="basis-4/12 ms-8 pe-8">
+                <label>&nbsp;</label>
+                <button type="button" @click="onDuplicateList(idx)">
+                  {{ localize("SYSTEMMOD.Lists.Duplicate") }}
+                  {{ localize("SYSTEMMOD.Lists.List") }}
+                </button>
               </div>
               <div class="basis-1/2">
                 <label>&nbsp;</label>
@@ -68,8 +75,11 @@
               </div>
             </div>
             <div class="flex flex-row my-2">
-              <div class="basis-8/12 flex flex-row">
-                <div class="basis-auto me-3">
+              <div class="basis-8/12 flex flex-row gap-x-2">
+                <div
+                  class="basis-auto me-3"
+                  :title="localize('SYSTEMMOD.Lists.ExistsIfHelp')"
+                >
                   <label
                     class="ms-2 text-sm font-medium inert:opacity-50"
                     :for="`${list.id}-checkbox-ei`"
@@ -83,7 +93,7 @@
                     {{ localize("SYSTEMMOD.Lists.ListOption.ExistsIf") }}:
                   </label>
                 </div>
-                <div class="basis-4/12">
+                <div class="basis-auto">
                   <select
                     class="inert:opacity-40"
                     :inert="!list.options.existsIf"
@@ -93,6 +103,9 @@
                       {{ key }}
                     </option>
                   </select>
+                </div>
+                <div class="basis-auto">
+                  {{ localize("SYSTEMMOD.Lists.ExistsIfExists") }}
                 </div>
               </div>
             </div>
@@ -117,11 +130,19 @@
 </template>
 
 <script setup>
-import { inject, onMounted } from "vue";
+import {
+  inject,
+  nextTick,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef
+} from "vue";
 import { promiseTimeout } from "@vueuse/core";
+import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 import { VueDraggable } from "vue-draggable-plus";
 import { initFlowbite } from "flowbite";
-import { get } from "lodash-es";
+import { cloneDeep, get } from "lodash-es";
 import { localize } from "../../libs/vue/VueHelpers";
 import { nanoid } from "../../libs/nanoid";
 import OneToOneModValue from "./OneToOneModValue.vue";
@@ -129,7 +150,10 @@ import OneToOneModValue from "./OneToOneModValue.vue";
 const actor = inject("actor");
 
 const lists = defineModel();
+const tabsKey = defineModel("tabsKey");
 
+const focusEl = useTemplateRef("focusElm");
+const { activate, deactivate } = useFocusTrap(focusEl);
 const accordionId = nanoid();
 
 const addList = async () => {
@@ -165,6 +189,23 @@ const joinedSubKeys = key => {
   }
 };
 
+const onDuplicateList = async idx => {
+  if (
+    window.confirm(
+      localize("SYSTEMMOD.DoYouWantTo", {
+        action: localize("SYSTEMMOD.Lists.Duplicate").toLowerCase(),
+        thing: localize("SYSTEMMOD.Lists.List").toLowerCase()
+      })
+    )
+  ) {
+    const list = cloneDeep(lists.value[idx]);
+    list.id = nanoid();
+    lists.value.push(list);
+    await promiseTimeout(0);
+    initFlowbite();
+  }
+};
+
 const removeList = idx => {
   if (
     window.confirm(
@@ -178,8 +219,14 @@ const removeList = idx => {
 };
 
 onMounted(async () => {
+  activate();
+  await nextTick();
   await promiseTimeout(0);
   initFlowbite();
+});
+
+onUnmounted(async () => {
+  deactivate();
 });
 </script>
 

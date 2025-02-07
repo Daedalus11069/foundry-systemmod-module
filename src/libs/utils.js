@@ -1,4 +1,4 @@
-import { isRef, unref } from "vue";
+import { isRef, toRaw, toValue } from "vue";
 import { isObject } from "@vueuse/core";
 
 const stringToIdentifier = str => {
@@ -11,29 +11,30 @@ const stringToIdentifier = str => {
   }
 
   if (!identifier) {
-    return undefined;
+    return "_default";
   }
 
   return identifier;
 };
 
 function deepUnref(val) {
-  const checkedVal = isRef(val) ? unref(val) : val;
-  if (!isObject(checkedVal)) return checkedVal;
-  if (Array.isArray(checkedVal)) return unrefArray(checkedVal);
+  const checkedVal = toValue(val);
+  if (Array.isArray(checkedVal)) {
+    return unrefArray(checkedVal);
+  }
+  if (!isObject(checkedVal)) {
+    return checkedVal;
+  }
   return unrefObject(checkedVal);
 }
-
 function smartUnref(val) {
   if (val !== null && !isRef(val) && typeof val === "object")
     return deepUnref(val);
-  return unref(val);
+  return toRaw(toValue(val));
 }
-
 function unrefArray(arr) {
   arr.map(smartUnref);
 }
-
 function unrefObject(obj) {
   const unreffed = {};
   Object.keys(obj).forEach(key => {

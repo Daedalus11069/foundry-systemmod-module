@@ -1,5 +1,5 @@
 import { dollar as phrase } from "paraphrase";
-import { set, get, isEmpty } from "lodash-es";
+import { set, get, isEmpty, isObject } from "lodash-es";
 import { parseExpression } from "@babel/parser";
 import { evaluate } from "eval-estree-expression";
 import VueSheet from "./libs/vue/VueSheet.js";
@@ -41,7 +41,7 @@ Hooks.once("init", async function () {
             typeof value !== "undefined" &&
             value !== null &&
             value !== "" &&
-            (typeof value === "object" ? !isEmpty(value) : true)
+            (isObject(value) ? !isEmpty(value) : true)
           ) {
             set(this.system, ref.target, value);
           }
@@ -82,7 +82,7 @@ Hooks.once("init", async function () {
               typeof value !== "undefined" &&
               value !== null &&
               value !== "" &&
-              (typeof value === "object" ? !isEmpty(value) : true)
+              (isObject(value) ? !isEmpty(value) : true)
             ) {
               set(this.system, target, value);
             }
@@ -122,7 +122,7 @@ Hooks.once("init", async function () {
               typeof value !== "undefined" &&
               value !== null &&
               value !== "" &&
-              (typeof value === "object" ? !isEmpty(value) : true)
+              (isObject(value) ? !isEmpty(value) : true)
             ) {
               changes[ref.target] = value;
             }
@@ -168,7 +168,7 @@ Hooks.once("init", async function () {
               typeof value !== "undefined" &&
               value !== null &&
               value !== "" &&
-              (typeof value === "object" ? !isEmpty(value) : true)
+              (isObject(value) ? !isEmpty(value) : true)
             ) {
               set(system, target, value);
             }
@@ -200,7 +200,8 @@ class SystemModActorSheet extends VueSheet(ActorSheet) {
   }
   constructor(...args) {
     super(...args);
-    this._activeTab = this.actor.getFlag("systemmod", `activeTab`) || [];
+    this._activeTab =
+      this.actor.getFlag("systemmod", `activeTab`) || "settings";
     this._modificationSourceKey =
       this.actor.getFlag("systemmod", "modificationSourceKey") || "";
     this._modifications =
