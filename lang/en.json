@@ -1,10 +1,51 @@
 {
   "SYSTEMMOD": {
-    "Modifications": "Modifications",
+    "OneToOne": {
+      "OneToOne": "One-To-One",
+      "Modification": "Modification",
+      "SourceKey": "Source Key",
+      "Source": "Source",
+      "Target": "Target",
+      "SourceType": "Source Type",
+      "SourceTypes": {
+        "Text": "Text",
+        "Number": "Number",
+        "Boolean": "Boolean"
+      },
+      "Condition": "Condition",
+      "ConditionHelp": "The result becomes the evaluated condition.  'Value' is the value of the source and can be used in the condition.",
+      "AddModification": "Add Modification"
+    },
+    "Lists": {
+      "Lists": "Lists",
+      "List": "List",
+      "Add": "Add List",
+      "Remove": "Remove",
+      "Key": "Key",
+      "AvailableSubKeys": "Available sub-keys",
+      "ListOption": {
+        "ExistsIf": "Exists If"
+      },
+      "SubKeyHelp": "Can be used in place of key names in target values for modifications.  Use syntax of ${subKey} to replace value with sub key value.",
+      "InvalidKeyType": "Invalid Key type; key must point to a collection key-value objects."
+    },
+    "OneToOneModValue": {
+      "SourceType": "Source Type",
+      "SourceTypes": {
+        "Text": "Text",
+        "Number": "Number",
+        "Boolean": "Boolean",
+        "Raw": "Raw"
+      },
+      "Condition": "Condition",
+      "ConditionHelp": "The result becomes the evaluated condition.  'Value' is the value of the source and can be used in the condition.",
+      "Raw": "Raw Value",
+      "RawHelp": "The result becomes the evaluated raw value.  'Value' is the value of the source and can be used in the raw value."
+    },
     "Remove": "Remove",
-    "Source": "Source",
-    "Target": "Target",
-    "AddModification": "Add Modification",
-    "SaveModification": "Save Modification"
+    "AreYouSure": "Are you sure you want to remove this {thing}?\nThis action cannot be undone.",
+    "Error": {
+      "FailedLoadingConfig": "Config for {actor} failed to load! Error message: {error}"
+    }
   }
 }
