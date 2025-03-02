@@ -1,5 +1,17 @@
 {
   "SYSTEMMOD": {
+    "GlobalSettingsMenu": {
+      "Name": "Global Settings",
+      "Label": "Global Settings"
+    },
+    "GlobalConfig": {
+      "Name": "Global Settings",
+      "Hint": "Sets the modifications and lists for every user."
+    },
+    "IndividualConfig": {
+      "AllowedName": "Individual Config",
+      "AllowedHint": "Allow players to configure their systemmod settings individually"
+    },
     "OneToOne": {
       "OneToOne": "One-To-One",
       "Modification": "Modification",

@@ -29,13 +29,16 @@
         <div class="basis-3/12"></div>
       </div>
       <div class="flex flex-row gap-x-2">
-        <div class="basis-2/12">
+        <div class="basis-2/12" v-if="!isGlobalConfig">
           <select
             v-model="field.source"
             :placeholder="localize('SYSTEMMOD.OneToOne.Source')"
           >
             <option :value="key" v-for="key in sourceKeys">{{ key }}</option>
           </select>
+        </div>
+        <div class="basis-2/12" v-else>
+          <input type="text" v-model="field.source" />
         </div>
         <div class="basis-4/12 flex flex-row">
           <div class="basis-3/12">
@@ -94,6 +97,13 @@ import { initFlowbite } from "flowbite";
 import { localize } from "../../libs/vue/VueHelpers";
 
 const actor = inject("actor");
+
+const props = defineProps({
+  isGlobalConfig: {
+    type: Boolean,
+    default: false
+  }
+});
 
 const fields = defineModel();
 const sourceKey = defineModel("sourceKey");

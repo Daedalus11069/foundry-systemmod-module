@@ -30,12 +30,15 @@
         <div class="basis-3/12"></div>
       </div>
       <div class="flex flex-row gap-x-2">
-        <div class="basis-2/12">
+        <div class="basis-2/12" v-if="!isGlobalConfig">
           <select v-model="field.source">
             <option :value="option" v-for="option in sourceOptions">
               {{ option }}
             </option>
           </select>
+        </div>
+        <div class="basis-2/12" v-else>
+          <input type="text" v-model="field.source" />
         </div>
         <div class="basis-4/12 flex flex-row mb-2">
           <div class="basis-3/12">
@@ -91,6 +94,10 @@ import { localize } from "../../libs/vue/VueHelpers";
 const props = defineProps({
   sourceOptions: {
     type: Array
+  },
+  isGlobalConfig: {
+    type: Boolean,
+    default: false
   }
 });
 

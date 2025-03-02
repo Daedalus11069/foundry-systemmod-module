@@ -1,7 +1,7 @@
 <template>
   <div class="systemmod-container">
     <header>
-      <h1>{{ actor.name }}</h1>
+      <h1>{{ localize("SYSTEMMOD.GlobalSettingsMenu.Name") }}</h1>
     </header>
     <nav class="systemmod-sheet-tabs">
       <a
@@ -82,38 +82,28 @@
     </nav>
 
     <div :key="tabsKey">
-      <div
-        class="systemmod-tab"
-        :class="{ 'opacity-30': !localConfigAllowed }"
-        :inert="!localConfigAllowed"
-        v-show="activeTab === 'one-to-one'"
-      >
+      <div class="systemmod-tab" v-show="activeTab === 'one-to-one'">
         <div class="flex flex-col">
           <h3 class="py-2!">{{ localize("SYSTEMMOD.OneToOne.OneToOne") }}</h3>
           <OneToOne
             v-model:sourceKey="modificationSourceKey"
             v-model:tabsKey="tabsKey"
             v-model="modifications"
+            :isGlobalConfig="true"
           />
         </div>
       </div>
-      <div
-        class="systemmod-tab"
-        :class="{ 'opacity-30': !localConfigAllowed }"
-        :inert="!localConfigAllowed"
-        v-show="activeTab === 'lists'"
-      >
+      <div class="systemmod-tab" v-show="activeTab === 'lists'">
         <div class="flex flex-col">
           <h3 class="py-2!">{{ localize("SYSTEMMOD.Lists.Lists") }}</h3>
-          <Lists v-model:tabsKey="tabsKey" v-model="lists" />
+          <Lists
+            v-model:tabsKey="tabsKey"
+            v-model="lists"
+            :isGlobalConfig="true"
+          />
         </div>
       </div>
-      <div
-        class="systemmod-tab"
-        :class="{ 'opacity-30': !localConfigAllowed }"
-        :inert="!localConfigAllowed"
-        v-show="activeTab === 'settings'"
-      >
+      <div class="systemmod-tab" v-show="activeTab === 'settings'">
         <div class="flex flex-col">
           <h3 class="py-2!">{{ localize("SYSTEMMOD.Settings") }}</h3>
           <div class="flex flex-row gap-x-2">
@@ -146,23 +136,19 @@ import OneToOne from "./components/OneToOne.vue";
 import Lists from "./components/Lists.vue";
 import { nanoid } from "../libs/nanoid";
 
-const actor = inject("actor");
-const actorSheet = inject("sheet");
+const settingsSheet = inject("sheet");
 
-const data = ref(actorSheet.getData());
+const data = ref(settingsSheet.getData());
 
 const tabsKey = ref(nanoid());
 
-const localConfigAllowed = ref(
-  game.settings.get("systemmod", "individualConfigAllowed") || false
-);
 const activeTab = ref(data.value.activeTab || "one-to-one");
 const modificationSourceKey = ref(data.value.modificationSourceKey || "");
 const modifications = ref(data.value.modifications || []);
 const lists = ref(data.value.lists || []);
 
 const { open, onChange } = useFileDialog({
-  accept: "*.json",
+  accept: "application/json",
   multiple: false
 });
 
@@ -171,14 +157,19 @@ const toggleTab = active => {
 };
 
 const saveData = async () => {
-  actorSheet._activeTab = activeTab.value;
-  actorSheet._modificationSourceKey = modificationSourceKey.value;
-  actorSheet._modifications = modifications.value.filter(mod => {
+  settingsSheet._activeTab = activeTab.value;
+  settingsSheet._modificationSourceKey = modificationSourceKey.value;
+  settingsSheet._modifications = modifications.value.filter(mod => {
     return mod.source !== "" && mod.target !== "";
   });
-  actorSheet._lists = lists.value;
-  await actor.prepareData();
-  await actorSheet._saveFlags();
+  settingsSheet._lists = lists.value;
+  const config = deepUnref({
+    activeTab,
+    modificationSourceKey,
+    modifications,
+    lists
+  });
+  await settingsSheet._updateObject(config);
 };
 
 const onExportConfig = () => {
@@ -208,13 +199,10 @@ onChange(async fileList => {
 
     await promiseTimeout(0);
     initFlowbite();
-    ui.notifications.info(
-      localize("SYSTEMMOD.LoadedConfig", { actor: actor.name })
-    );
   } catch (e) {
     ui.notifications.error(
       localize("SYSTEMMOD.Error.FailedLoadingConfig", {
-        actor: actor.name,
+        actor: localize("SYSTEMMOD.GlobalSettingsMenu.Name"),
         error: e.message
       })
     );
@@ -222,7 +210,7 @@ onChange(async fileList => {
 });
 
 onMounted(() => {
-  data.value = actorSheet.getData();
+  data.value = settingsSheet.getData();
 });
 
 onUnmounted(async () => {

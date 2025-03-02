@@ -93,7 +93,7 @@
                     {{ localize("SYSTEMMOD.Lists.ListOption.ExistsIf") }}:
                   </label>
                 </div>
-                <div class="basis-auto">
+                <div class="basis-auto" v-if="!isGlobalConfig">
                   <select
                     class="inert:opacity-40"
                     :inert="!list.options.existsIf"
@@ -103,6 +103,13 @@
                       {{ key }}
                     </option>
                   </select>
+                </div>
+                <div class="basis-auto" v-else>
+                  <input
+                    type="text"
+                    :inert="!list.options.existsIf"
+                    v-model="list.options.existsIfKey"
+                  />
                 </div>
                 <div class="basis-auto">
                   {{ localize("SYSTEMMOD.Lists.ExistsIfExists") }}
@@ -114,6 +121,7 @@
                 <OneToOneModValue
                   v-model="list.modifications"
                   :source-options="getSubKeys(list.key)"
+                  :isGlobalConfig
                 />
               </div>
             </div>
@@ -130,14 +138,7 @@
 </template>
 
 <script setup>
-import {
-  inject,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  useTemplateRef
-} from "vue";
+import { inject, nextTick, onMounted, onUnmounted, useTemplateRef } from "vue";
 import { promiseTimeout } from "@vueuse/core";
 import { useFocusTrap } from "@vueuse/integrations/useFocusTrap";
 import { VueDraggable } from "vue-draggable-plus";
@@ -148,6 +149,13 @@ import { nanoid } from "../../libs/nanoid";
 import OneToOneModValue from "./OneToOneModValue.vue";
 
 const actor = inject("actor");
+
+const props = defineProps({
+  isGlobalConfig: {
+    type: Boolean,
+    default: false
+  }
+});
 
 const lists = defineModel();
 const tabsKey = defineModel("tabsKey");
@@ -168,6 +176,9 @@ const addList = async () => {
 };
 
 const getSubKeys = key => {
+  if (props.isGlobalConfig) {
+    return [];
+  }
   const data = get(actor.system, `${key}.0`, "");
   if (Array.isArray(data) || typeof data !== "object") {
     return [localize("SYSTEMMOD.Lists.InvalidKeyType")];
