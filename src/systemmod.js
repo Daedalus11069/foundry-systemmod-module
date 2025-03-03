@@ -84,11 +84,7 @@ Hooks.once("init", async function () {
 
     if (modificationSourceKey !== "") {
       for (const ref of modifications) {
-        if (
-          ref.target !== "" &&
-          ref.source !== "" &&
-          get(this.system, `${modificationSourceKey}.${ref.source}`, "") !== ""
-        ) {
+        if (ref.target !== "" && ref.source !== "") {
           let value = get(
             this.system,
             `${modificationSourceKey}.${ref.source}`,
@@ -96,6 +92,9 @@ Hooks.once("init", async function () {
           );
           if (ref.type === "number") {
             value = window.parseFloat(value);
+            if (isNaN(value)) {
+              value = "";
+            }
           } else if (ref.type === "boolean") {
             // Coerce to boolean to avoid raw values
             value = !!evaluate.sync(parseExpression(ref.condition), {
@@ -105,7 +104,6 @@ Hooks.once("init", async function () {
           if (
             typeof value !== "undefined" &&
             value !== null &&
-            value !== "" &&
             (isObject(value) ? !isEmpty(value) : true)
           ) {
             set(this.system, ref.target, value);
@@ -157,7 +155,7 @@ Hooks.once("init", async function () {
     }
   };
 
-  Actor.prototype.refreshModifications = async function () {
+  Actor.prototype._refreshModifications = async function () {
     const { modifications, modificationSourceKey } = this._getSystemModConfig({
       modifications: [],
       modificationSourceKey: ""
@@ -199,7 +197,7 @@ Hooks.once("init", async function () {
       return changes;
     }
   };
-  Actor.prototype.refreshLists = async function () {
+  Actor.prototype._refreshLists = async function () {
     const system = {};
     const { lists } = this._getSystemModConfig({
       lists: []
@@ -248,9 +246,23 @@ Hooks.once("init", async function () {
     return system;
   };
 
+  Actor.prototype.refreshModifications = async function () {
+    const systemMods = await this._refreshModifications();
+    await this.update({
+      system: systemMods
+    });
+  };
+
+  Actor.prototype.refreshLists = async function () {
+    const systemLists = await this._refreshLists();
+    await this.update({
+      system: systemLists
+    });
+  };
+
   Actor.prototype.refreshSystem = async function () {
-    const systemMods = await this.refreshModifications();
-    const systemLists = await this.refreshLists();
+    const systemMods = await this._refreshModifications();
+    const systemLists = await this._refreshLists();
     this.update({
       system: {
         ...systemMods,
@@ -263,13 +275,19 @@ Hooks.once("init", async function () {
     refreshModifications: async actorId => {
       const actor = game.actors.get(actorId);
       if (actor && actor.flags.systemmod) {
-        await actor.refreshModifications();
+        const systemMods = await actor._refreshModifications();
+        await actor.update({
+          system: systemMods
+        });
       }
     },
     refreshLists: async actorId => {
       const actor = game.actors.get(actorId);
       if (actor && actor.flags.systemmod) {
-        await actor.refreshLists();
+        const systemLists = await actor._refreshLists();
+        await actor.update({
+          system: systemLists
+        });
       }
     },
     refreshSystem: async actorId => {
